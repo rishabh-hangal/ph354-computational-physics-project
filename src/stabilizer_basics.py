@@ -3,10 +3,9 @@ import numpy as np
 
 # 1. Create the 'Instruction' set
 circuit = stim.Circuit()
-circuit.append("S", [0])  
 circuit.append("H", [0])
-circuit.append("S", [1])
-circuit.append("H", [1])
+circuit.append("CNOT", [0,1])
+
 
 # 2. Create the 'Simulator' (The thing that holds the state)
 sim = stim.TableauSimulator()
