@@ -1,8 +1,7 @@
 import stim
 
 import stim
-print(stim.__version__)
-
+print(type(stim.Circuit()))python3 -m venv ~/stim_env
 circuit = stim.Circuit()
 circuit.append("H", [0])
 circuit.append("CX", [0, 1])

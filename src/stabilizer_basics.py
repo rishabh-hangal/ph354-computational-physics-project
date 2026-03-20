@@ -12,7 +12,7 @@ sim = stim.TableauSimulator()
 
 # 3. Feed the instructions to the simulator
 sim.do(circuit)
-
+hasattr(sim, "current_tableau")
 # 4. Peek at the Binary Check Matrix (Tableau)
 # We use current_inverse_tableau because it gives the 'stabilizers' directly
 # Pull the internal Heisenberg state and invert it to get the Schrödinger state
