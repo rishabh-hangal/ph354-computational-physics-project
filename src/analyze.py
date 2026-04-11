@@ -65,7 +65,7 @@ def plot_finite_size_scaling(file_path, num_shots):
     plt.legend(title="System Size", loc='best')
     
     # Save the figure to your PDF folder, then display it
-    save_path = "../figures/finite_size_scaling_raw.pdf"
+    save_path = "../figures/trial_run_finite_size_scaling_raw.pdf"
     os.makedirs("../figures", exist_ok=True)
     plt.savefig(save_path, bbox_inches='tight')
     print(f"Plot saved to {save_path}")
@@ -78,7 +78,7 @@ def plot_finite_size_scaling(file_path, num_shots):
 if __name__ == '__main__':
     # Define the exact number of shots you used in run_sweep.py
     N_SHOTS = 100 
-    DATA_FILE = "../data/mipt_finite_size_scaling.npz"
+    DATA_FILE = "../data/trial_run_mipt_finite_size_scaling.npz"
     
     plot_finite_size_scaling(DATA_FILE, N_SHOTS)
 
@@ -136,7 +136,7 @@ def plot_data_collapse(file_path, p_c_guess, nu_guess):
 
 # To use this, add it to the bottom of your analyze.py execution block:
 if __name__ == '__main__':
-    DATA_FILE = "../data/mipt_finite_size_scaling.npz"
+    DATA_FILE = "../data/trial_run_mipt_finite_size_scaling.npz"
     
     # Standard 1D random Clifford MIPT values are roughly:
     # p_c ~ 0.16, \nu ~ 1.3. You will need to tune these to fit your specific data!
@@ -209,13 +209,54 @@ def optimize_data_collapse(L_values, p_values, S_mean, p_c_bounds, nu_bounds):
         return best_pc, best_nu
     else:
         raise RuntimeError("Optimization failed to converge. Check your bounds or data quality.")
+    
+def plot_computational_scaling(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Cannot find {file_path}")
+        
+    data = np.load(file_path)
+    L_values = data['L_values']
+    p_values = data['p_values']
+    
+    # Load the 1D array of total execution times
+    Time_per_L = data['Time_per_L']
+    num_p = len(p_values)
+    
+    # --- PLOTTING ---
+    plt.figure(figsize=(8, 6), dpi=150)
+    plt.rcParams.update({'font.size': 12})
+    
+    plt.plot(L_values, Time_per_L, marker='s', markersize=8, 
+             linestyle='-', linewidth=2.5, color='#2ca02c')
+                 
+    # Set to Log-Log Scale to reveal algorithmic complexity
+    plt.xscale('log', base=2)
+    plt.yscale('log', base=10)
+    
+    plt.title(f'Algorithmic Scaling (Total time for all {num_p} probabilities)', pad=15)
+    plt.xlabel('System Size ($L$)', fontsize=14)
+    plt.ylabel('Total Execution Time (Seconds)', fontsize=14)
+    
+    plt.xticks(L_values, labels=[str(L) for L in L_values])
+    plt.grid(True, which='major', linestyle='-', alpha=0.5)
+    plt.grid(True, which='minor', linestyle=':', alpha=0.3)
+    
+    save_path = "../figures/computational_scaling.pdf"
+    os.makedirs("../figures", exist_ok=True)
+    plt.savefig(save_path, bbox_inches='tight')
+    print(f"Scaling plot saved to {save_path}")
+    
+    plt.show()
+
+# To run this, just add it to your execution block:
+
 
 # ==========================================
 # HOW TO INTEGRATE THIS INTO YOUR SCRIPT
 # ==========================================
 if __name__ == '__main__':
-    data = np.load("../data/mipt_finite_size_scaling.npz")
-    
+    data = np.load("../data/trial_run_mipt_finite_size_scaling.npz")
+    plot_computational_scaling("../data/trial_run_mipt_finite_size_scaling.npz")
     # We restrict the optimizer to a physically reasonable window 
     # based on the MIPT universality class literature.
     optimal_pc, optimal_nu = optimize_data_collapse(
@@ -228,4 +269,4 @@ if __name__ == '__main__':
     
     # Now you plug these optimal values directly into the plotting function 
     # we wrote previously!
-    # plot_data_collapse("../data/mipt_finite_size_scaling.npz", optimal_pc, optimal_nu)
+    # plot_data_collapse("../data/trial_run_mipt_finite_size_scaling.npz", optimal_pc, optimal_nu)

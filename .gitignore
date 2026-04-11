@@ -1,0 +1,12 @@
+# Ignore all simulation data
+data/*.npz
+
+# Ignore all generated plots
+figures/*.pdf
+
+# Ignore macOS hidden system files
+.DS_Store
+
+# Ignore Python cache
+__pycache__/
+*.pyc

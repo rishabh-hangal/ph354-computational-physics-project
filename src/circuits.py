@@ -8,9 +8,6 @@ def sim_to_matrix(sim):
     _, _, z2x, z2z, _, _ = tableau.to_numpy()
     return np.hstack([z2x.astype(np.uint8), z2z.astype(np.uint8)])
 
-
-
-
 def one_layer_circuit(L, p, parity, sim):
     """
     Generates a single layer of random 2-qubit Clifford gates followed by random measurements.
