@@ -50,6 +50,16 @@ def plot_finite_size_scaling(file_path, num_shots):
     plt.xlabel('Measurement Probability ($p$)', fontsize=14)
     plt.ylabel('Half-Chain Entanglement Entropy $\\langle S(L/2) \\rangle$', fontsize=14)
     
+    # Set the y-axis to a logarithmic scale
+    plt.yscale('log')
+    
+    # Add a vertical grid for easier reading of the crossing point
+    # We can also add a horizontal grid for the minor log ticks to make it easier to read
+    plt.grid(True, which='major', linestyle='--', alpha=0.6)
+    plt.grid(True, which='minor', linestyle=':', alpha=0.3)
+    
+    plt.legend(title="System Size", loc='best')
+    
     # Add a vertical grid for easier reading of the crossing point
     plt.grid(True, linestyle='--', alpha=0.6)
     plt.legend(title="System Size", loc='best')
