@@ -4,6 +4,7 @@ import time
 import logging
 import os
 import sys
+import argparse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import your Page curve function
@@ -16,10 +17,16 @@ def worker_task(args):
     L, T, p = args
     return measure_page_curve(L, T, p)
 def main():
-    L = 128                                     # Fixed system size
+    parser = argparse.ArgumentParser(description="Sweep p values for Page curve.")
+    parser.add_argument('-L', '--L', type=int, default=128, help="System size")
+    parser.add_argument('-p', '--p_values', type=float, nargs='+', default=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25], help="List of probabilities")
+    parser.add_argument('-N', '--num_shots', type=int, default=400, help="Number of trajectories per point")
+    args = parser.parse_args()
+
+    L = args.L                                     # Fixed system size
     T = int(2 * L)                              # Evolve to steady state
-    p_values = np.array([0.00, 0.05, 0.10, 0.15, 0.20, 0.25])      # Sweep probabilities across the transition
-    num_shots = 400
+    p_values = np.array(args.p_values)      # Sweep probabilities across the transition
+    num_shots = args.num_shots
     
     # Initialize matrix: rows = different p values, columns = spatial cuts (1 to L-1)
     S_mean_page = np.zeros((len(p_values), L - 1))
@@ -52,9 +59,11 @@ def main():
         mid_idx = (L - 1) // 2
         logging.info(f"Finished p={p:.3f} | Half-chain S={S_mean_page[j, mid_idx]:.4f} | Time: {step_time:.2f}s")
             
-    save_dir = "../data"
+    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'page_curve'))
     os.makedirs(save_dir, exist_ok=True)
-    save_path = os.path.join(save_dir, f"page_curve_L{L}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz")
+    
+    p_str = f"p{np.min(p_values)}" if np.min(p_values) == np.max(p_values) else f"p{np.min(p_values)}-{np.max(p_values)}"
+    save_path = os.path.join(save_dir, f"page_curve_L{L}_{p_str}_N{num_shots}.npz")
     
     np.savez_compressed(save_path, p_values=p_values, cuts=np.arange(1, L), 
                         S_mean_page=S_mean_page, S_var_page=S_var_page, Time_per_p=Time_per_p)

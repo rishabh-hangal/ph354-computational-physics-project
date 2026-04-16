@@ -4,6 +4,7 @@ import time
 import logging
 import os
 import sys
+import argparse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import your dynamics function
@@ -21,23 +22,32 @@ def worker_task(args):
     return entropy_over_time(L, T, p)
 
 def main():
+    parser = argparse.ArgumentParser(description="Sweep L and p values for entanglement dynamics.")
+    parser.add_argument('-L', '--L_values', type=int, nargs='+', required=True, help="List of system sizes")
+    parser.add_argument('-p', '--p_values', type=float, nargs='+', required=True, help="List of probabilities")
+    parser.add_argument('-N', '--num_shots', type=int, required=True, help="Number of trajectories per point")
+    args = parser.parse_args()
+
     # =========================================================================
     # CONFIGURATION ZONE
     # All physical and infrastructural parameters MUST be defined here.
     # Do not hardcode numbers anywhere else in the script.
     # =========================================================================
     
-    L_values = np.array([16, 32, 64, 128])
-    p_values = np.array([0.02,0.40])
+    L_values = np.array(args.L_values)
+    p_values = np.array(args.p_values)
     
-    num_shots = 500
-    out_dir = "../data"
+    num_shots = args.num_shots
+    out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'dynamics'))
     
     # Calculate uniform max time based on the LARGEST system size
-    T_max = int(2.5 * np.max(L_values))
+    T_max = int(2 * np.max(L_values))
     
     # Generate an explicit filename based on the config
-    filename = f"dynamics_L{np.min(L_values)}-{np.max(L_values)}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz"
+    L_str = f"L{np.min(L_values)}" if np.min(L_values) == np.max(L_values) else f"L{np.min(L_values)}-{np.max(L_values)}"
+    p_str = f"p{np.min(p_values)}" if np.min(p_values) == np.max(p_values) else f"p{np.min(p_values)}-{np.max(p_values)}"
+    
+    filename = f"dynamics_{L_str}_{p_str}_N{num_shots}.npz"
     save_path = os.path.join(out_dir, filename)
     
     # =========================================================================

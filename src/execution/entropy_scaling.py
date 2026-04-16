@@ -4,6 +4,7 @@ import time
 import logging
 import os
 import sys
+import argparse
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the specific protocol you want to run from your observables module
@@ -32,10 +33,16 @@ def worker_task(args):
 # 3. THE MASTER ORCHESTRATOR
 # ==========================================
 def main():
+    parser = argparse.ArgumentParser(description="Sweep L and p values for finite size scaling.")
+    parser.add_argument('-L', '--L_values', type=int, nargs='+', default=[8, 16, 32, 64, 128, 256, 512, 1024], help="List of system sizes")
+    parser.add_argument('-p', '--p_values', type=float, nargs='+', default=[0.24], help="List of probabilities")
+    parser.add_argument('-N', '--num_shots', type=int, default=500, help="Number of trajectories per point")
+    args = parser.parse_args()
+
     # --- Define the Parameter Grid ---
-    L_values = [8, 16, 32, 64, 128, 256, 512, 1024]                                 # System sizes
-    p_values = np.array([0.24])                   # Sweep probabilities
-    num_shots = 500                                          # Trajectories per (L, p) point
+    L_values = args.L_values
+    p_values = np.array(args.p_values)
+    num_shots = args.num_shots
     
     # Initialize matrices to store the statistical results
     S_mean = np.zeros((len(L_values), len(p_values)))
@@ -76,9 +83,13 @@ def main():
         logging.info(f"*** COMPLETED ALL 'p' FOR L={L}. TOTAL TIME: {L_total_time:.2f}s ***\n")
             
     # --- Save the Data ---
-    save_dir = "../data"
+    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'scaling_v2'))
     os.makedirs(save_dir, exist_ok=True)
-    filename = f"scaling_L{np.min(L_values)}-{np.max(L_values)}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz"
+    
+    L_str = f"L{np.min(L_values)}" if np.min(L_values) == np.max(L_values) else f"L{np.min(L_values)}-{np.max(L_values)}"
+    p_str = f"p{np.min(p_values)}" if np.min(p_values) == np.max(p_values) else f"p{np.min(p_values)}-{np.max(p_values)}"
+    
+    filename = f"scaling_{L_str}_{p_str}_N{num_shots}.npz"
     save_path = os.path.join(save_dir, filename)
     
     np.savez_compressed(

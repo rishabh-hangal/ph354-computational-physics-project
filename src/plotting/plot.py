@@ -126,7 +126,7 @@ def plot_page_curve(data_file, p_values_target=None):
     ax.legend(loc='upper left', frameon=True, edgecolor='darkgrey', fontsize=12, handlelength=1.5, ncol=2)
     
     ensure_dir(FIGURES_DIR)
-    output_file = os.path.join(FIGURES_DIR, "mipt_loglog_page_curve.pdf")
+    output_file = os.path.join(FIGURES_DIR, "page_curve.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
     print(f"-> Saved {output_file}")
@@ -174,7 +174,7 @@ def plot_vs_p(data_file, L_values_target=None):
     ax.legend(loc='upper right', frameon=True, edgecolor='darkgrey', fontsize=14, handlelength=1.5)
     
     ensure_dir(FIGURES_DIR)
-    output_file = os.path.join(FIGURES_DIR, "mipt_logS_vs_p.pdf")
+    output_file = os.path.join(FIGURES_DIR, "S_vs_p.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
     print(f"-> Saved {output_file}")
@@ -244,9 +244,10 @@ def plot_dynamics(files, target_p):
     ax.set_ylabel('Entanglement Entropy $S(t)$', fontsize=16)
     ax.legend(loc='lower right', frameon=False)
     ax.grid(True, linestyle='--', alpha=0.6)
+    ax.set_ylim(bottom=0)
     
     ensure_dir(FIGURES_DIR)
-    output_file = os.path.join(FIGURES_DIR, f"mipt_dynamics_scaling_p{actual_p:.2f}.pdf")
+    output_file = os.path.join(FIGURES_DIR, f"dynamics_scaling_p{actual_p:.2f}.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
     print(f"-> Saved {output_file}")
