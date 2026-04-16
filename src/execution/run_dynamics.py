@@ -3,9 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import your dynamics function
-from observables import entropy_over_time
+from core.observables import entropy_over_time
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
@@ -35,7 +37,7 @@ def main():
     T_max = int(2.5 * np.max(L_values))
     
     # Generate an explicit filename based on the config
-    filename = f"mipt_dynamics_L{np.max(L_values)}_shots_{num_shots}.npz"
+    filename = f"dynamics_L{np.min(L_values)}-{np.max(L_values)}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz"
     save_path = os.path.join(out_dir, filename)
     
     # =========================================================================

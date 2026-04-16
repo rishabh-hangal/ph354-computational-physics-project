@@ -71,18 +71,17 @@ def merge_scaling_files(file_list, output_filename):
     print("=========================================")
 
 if __name__ == '__main__':
-    # Define the exact files you want to stitch together
-    # Modify these paths to match your actual filenames
-    files_to_merge = [
-        "../data/L=8-1024_p=0.00-0.15_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.16-0.20_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.21_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.22_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.23_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.24_N=500_mipt_finite_size_scaling.npz",
-        "../data/L=8-1024_p=0.25-0.70_N=500_mipt_finite_size_scaling.npz"
-    ]
+    # Construct robust absolute paths based on the script location
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "data", "scaling_v2"))
     
-    output_file = "../data/mipt_scaling_master_stitched.npz"
+    # Dynamically find all scaling sweeps, excluding existing master files
+    search_pattern = os.path.join(data_dir, "scaling_L*.npz")
+    potential_files = glob.glob(search_pattern)
+    files_to_merge = [f for f in potential_files if "master" not in f and "stitched" not in f and "ALL" not in f]
     
-    merge_scaling_files(files_to_merge, output_file)
+    output_file = os.path.join(data_dir, "scaling_master_stitched.npz")
+    
+    if len(files_to_merge) > 0:
+        merge_scaling_files(files_to_merge, output_file)
+    else:
+        print("No valid scaling files found to merge.")

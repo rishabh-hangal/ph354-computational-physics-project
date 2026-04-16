@@ -1,7 +1,7 @@
 import stim
 import numpy as np
-from calculate_entropy import calculate_entropy
-from circuits import sim_to_matrix, one_layer_circuit, multilayer_circuit
+from .calculate_entropy import calculate_entropy
+from .circuits import sim_to_matrix, one_layer_circuit, multilayer_circuit
 
 
 def entropy_over_time(L, T, p):

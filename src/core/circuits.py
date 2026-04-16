@@ -1,7 +1,8 @@
 import stim
 import numpy as np
+import scipy.sparse as sps
 import random
-from calculate_entropy import calculate_entropy
+from .calculate_entropy import calculate_entropy
 
 def sim_to_matrix(sim):
     tableau = sim.current_inverse_tableau() ** -1

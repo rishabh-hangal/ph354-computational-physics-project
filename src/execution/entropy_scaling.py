@@ -3,9 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import the specific protocol you want to run from your observables module
-from observables import measure_final_entropy
+from core.observables import measure_final_entropy
 
 # ==========================================
 # 1. LOGGING CONFIGURATION
@@ -76,7 +78,8 @@ def main():
     # --- Save the Data ---
     save_dir = "../data"
     os.makedirs(save_dir, exist_ok=True)
-    save_path = os.path.join(save_dir, "L=8-1024_p=0.24_N=500_mipt_finite_size_scaling.npz") #rename before each run to reflect the protocol and sweep details
+    filename = f"scaling_L{np.min(L_values)}-{np.max(L_values)}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz"
+    save_path = os.path.join(save_dir, filename)
     
     np.savez_compressed(
         save_path, 

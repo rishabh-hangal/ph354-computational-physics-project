@@ -3,9 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Import your Page curve function
-from observables import measure_page_curve
+from core.observables import measure_page_curve
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
@@ -52,7 +54,7 @@ def main():
             
     save_dir = "../data"
     os.makedirs(save_dir, exist_ok=True)
-    save_path = os.path.join(save_dir, f"p={','.join(str(p) for p in p_values)}_mipt_page_curve_L{L}.npz")
+    save_path = os.path.join(save_dir, f"page_curve_L{L}_p{np.min(p_values)}-{np.max(p_values)}_N{num_shots}.npz")
     
     np.savez_compressed(save_path, p_values=p_values, cuts=np.arange(1, L), 
                         S_mean_page=S_mean_page, S_var_page=S_var_page, Time_per_p=Time_per_p)
