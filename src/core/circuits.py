@@ -19,11 +19,10 @@ def one_layer_circuit(L, p, parity, sim):
     """
     if parity not in [0, 1]:
         raise ValueError("Parity must be 0 (even) or 1 (odd).")   
-    for i in range(parity, L - 1, 2):
-        sim.do_tableau(stim.Tableau.random(2), [i, i+1])
     measured = [q for q in range(L) if random.random() < p]
     sim.measure_many(*measured)
-
+    for i in range(parity, L - 1, 2):
+        sim.do_tableau(stim.Tableau.random(2), [i, i+1])
     return sim
 
 
