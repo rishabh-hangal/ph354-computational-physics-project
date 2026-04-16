@@ -1,6 +1,6 @@
 import stim
 import numpy as np
-from entropy import calculate_entropy
+from calculate_entropy import calculate_entropy
 from circuits import sim_to_matrix, one_layer_circuit, multilayer_circuit
 
 
@@ -14,6 +14,7 @@ def entropy_over_time(L, T, p):
     entropies = []
     
     for t in range(T):
+        
         parity = t % 2
         one_layer_circuit(L, p, parity, sim)
         stabilizer_matrix = sim_to_matrix(sim)

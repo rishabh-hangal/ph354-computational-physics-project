@@ -32,7 +32,7 @@ def worker_task(args):
 def main():
     # --- Define the Parameter Grid ---
     L_values = [8, 16, 32, 64, 128, 256, 512, 1024]                                 # System sizes
-    p_values = np.linspace(0.16, 0.20, 5)                   # Sweep probabilities
+    p_values = np.array([0.24])                   # Sweep probabilities
     num_shots = 500                                          # Trajectories per (L, p) point
     
     # Initialize matrices to store the statistical results
@@ -76,7 +76,7 @@ def main():
     # --- Save the Data ---
     save_dir = "../data"
     os.makedirs(save_dir, exist_ok=True)
-    save_path = os.path.join(save_dir, "L=8-1024_p=0.16-0.20_N=500_mipt_finite_size_scaling.npz") #rename before each run to reflect the protocol and sweep details
+    save_path = os.path.join(save_dir, "L=8-1024_p=0.24_N=500_mipt_finite_size_scaling.npz") #rename before each run to reflect the protocol and sweep details
     
     np.savez_compressed(
         save_path, 
