@@ -34,9 +34,9 @@ def worker_task(args):
 # ==========================================
 def main():
     parser = argparse.ArgumentParser(description="Sweep L and p values for finite size scaling.")
-    parser.add_argument('-L', '--L_values', type=int, nargs='+', default=[8, 16, 32, 64, 128, 256, 512, 1024], help="List of system sizes")
-    parser.add_argument('-p', '--p_values', type=float, nargs='+', default=[0.24], help="List of probabilities")
-    parser.add_argument('-N', '--num_shots', type=int, default=500, help="Number of trajectories per point")
+    parser.add_argument('-L', '--L_values', type=int, nargs='+', required=True, help="List of system sizes")
+    parser.add_argument('-p', '--p_values', type=float, nargs='+', required=True, help="List of probabilities")
+    parser.add_argument('-N', '--num_shots', type=int, required=True, help="Number of trajectories per point")
     args = parser.parse_args()
 
     # --- Define the Parameter Grid ---
@@ -83,7 +83,7 @@ def main():
         logging.info(f"*** COMPLETED ALL 'p' FOR L={L}. TOTAL TIME: {L_total_time:.2f}s ***\n")
             
     # --- Save the Data ---
-    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'scaling_v2'))
+    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'scaling'))
     os.makedirs(save_dir, exist_ok=True)
     
     L_str = f"L{np.min(L_values)}" if np.min(L_values) == np.max(L_values) else f"L{np.min(L_values)}-{np.max(L_values)}"

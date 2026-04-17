@@ -21,7 +21,7 @@ plt.rcParams.update({
 })
 
 FIGURES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'figures'))
-UNITARY_OFFSET = 0.44
+UNITARY_OFFSET = 0
 p_c = 0.16
 
 def ensure_dir(path):
@@ -44,7 +44,7 @@ def plot_vs_L(data_file, p_values_target=None):
     if p_values_target is None:
         p_values_target = p_values
 
-    colors = plt.cm.tab20(np.linspace(0, 1, max(10, len(p_values_target))))
+    colors = plt.cm.tab10(np.linspace(0, 1, max(10, len(p_values_target))))
     
     for i, target_p in enumerate(p_values_target):
         p_idx = (np.abs(p_values - target_p)).argmin()
@@ -93,7 +93,7 @@ def plot_page_curve(data_file, p_values_target=None):
     if p_values_target is None:
         p_values_target = p_values
 
-    colors = plt.cm.tab20(np.linspace(0, 1, max(10, len(p_values_target))))
+    colors = plt.cm.tab10(np.linspace(0, 1, max(10, len(p_values_target))))
     markers = ['o', 's', 'v', '^', 'D', '<', '>', 'p', 'h', '8']
     
     for i, target_p in enumerate(p_values_target):

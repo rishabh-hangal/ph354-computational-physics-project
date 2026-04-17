@@ -18,9 +18,9 @@ def worker_task(args):
     return measure_page_curve(L, T, p)
 def main():
     parser = argparse.ArgumentParser(description="Sweep p values for Page curve.")
-    parser.add_argument('-L', '--L', type=int, default=128, help="System size")
-    parser.add_argument('-p', '--p_values', type=float, nargs='+', default=[0.00, 0.05, 0.10, 0.15, 0.20, 0.25], help="List of probabilities")
-    parser.add_argument('-N', '--num_shots', type=int, default=400, help="Number of trajectories per point")
+    parser.add_argument('-L', '--L', type=int, required=True, help="System size")
+    parser.add_argument('-p', '--p_values', type=float, nargs='+', required=True, help="List of probabilities")
+    parser.add_argument('-N', '--num_shots', type=int, required=True, help="Number of trajectories per point")
     args = parser.parse_args()
 
     L = args.L                                     # Fixed system size
