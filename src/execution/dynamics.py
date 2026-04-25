@@ -3,12 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
-import sys
 import argparse
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.config import DYNAMICS_DATA_DIR, ensure_dirs
 
 # Import your dynamics function
-from core.observables import entropy_over_time
+from src.core.observables import entropy_over_time
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
@@ -38,7 +37,8 @@ def main():
     p_values = np.array(args.p_values)
     
     num_shots = args.num_shots
-    out_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'dynamics'))
+    ensure_dirs()
+    out_dir = DYNAMICS_DATA_DIR
     
     # Calculate uniform max time based on the LARGEST system size
     T_max = int(2 * np.max(L_values))
@@ -51,8 +51,6 @@ def main():
     save_path = os.path.join(out_dir, filename)
     
     # =========================================================================
-
-    os.makedirs(out_dir, exist_ok=True)
     
     logging.info("=========================================")
     logging.info("   INITIALIZING MASTER DYNAMICS SWEEP    ")

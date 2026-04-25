@@ -4,6 +4,9 @@ import scipy.sparse as sps
 import random
 from .calculate_entropy import calculate_entropy
 
+# Precompile all 11520 2-qubit Clifford gates to avoid generating them on the fly
+_TWO_QUBIT_CLIFFORDS = tuple(stim.Tableau.iter_all(2))
+
 def sim_to_matrix(sim):
     tableau = sim.current_inverse_tableau() ** -1
     _, _, z2x, z2z, _, _ = tableau.to_numpy()
@@ -22,7 +25,7 @@ def one_layer_circuit(L, p, parity, sim):
     measured = [q for q in range(L) if random.random() < p]
     sim.measure_many(*measured)
     for i in range(parity, L - 1, 2):
-        sim.do_tableau(stim.Tableau.random(2), [i, i+1])
+        sim.do_tableau(random.choice(_TWO_QUBIT_CLIFFORDS), [i, i+1])
     return sim
 
 

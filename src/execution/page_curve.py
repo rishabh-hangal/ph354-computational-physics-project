@@ -3,12 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
-import sys
 import argparse
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.config import PAGE_DATA_DIR, ensure_dirs
 
 # Import your Page curve function
-from core.observables import measure_page_curve
+from src.core.observables import measure_page_curve
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s: %(message)s', datefmt='%H:%M:%S')
 
@@ -59,8 +58,8 @@ def main():
         mid_idx = (L - 1) // 2
         logging.info(f"Finished p={p:.3f} | Half-chain S={S_mean_page[j, mid_idx]:.4f} | Time: {step_time:.2f}s")
             
-    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'page_curve'))
-    os.makedirs(save_dir, exist_ok=True)
+    ensure_dirs()
+    save_dir = PAGE_DATA_DIR
     
     p_str = f"p{np.min(p_values)}" if np.min(p_values) == np.max(p_values) else f"p{np.min(p_values)}-{np.max(p_values)}"
     save_path = os.path.join(save_dir, f"page_curve_L{L}_{p_str}_N{num_shots}.npz")

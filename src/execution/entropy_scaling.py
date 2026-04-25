@@ -3,12 +3,11 @@ import multiprocessing as mp
 import time
 import logging
 import os
-import sys
 import argparse
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from src.config import SCALING_DATA_DIR, ensure_dirs
 
 # Import the specific protocol you want to run from your observables module
-from core.observables import measure_final_entropy
+from src.core.observables import measure_final_entropy
 
 # ==========================================
 # 1. LOGGING CONFIGURATION
@@ -83,8 +82,8 @@ def main():
         logging.info(f"*** COMPLETED ALL 'p' FOR L={L}. TOTAL TIME: {L_total_time:.2f}s ***\n")
             
     # --- Save the Data ---
-    save_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'scaling'))
-    os.makedirs(save_dir, exist_ok=True)
+    ensure_dirs()
+    save_dir = SCALING_DATA_DIR
     
     L_str = f"L{np.min(L_values)}" if np.min(L_values) == np.max(L_values) else f"L{np.min(L_values)}-{np.max(L_values)}"
     p_str = f"p{np.min(p_values)}" if np.min(p_values) == np.max(p_values) else f"p{np.min(p_values)}-{np.max(p_values)}"

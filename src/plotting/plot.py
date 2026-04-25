@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import os
@@ -20,12 +21,8 @@ plt.rcParams.update({
     'lines.markersize': 5
 })
 
-FIGURES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'figures'))
-UNITARY_OFFSET = 0
+from src.config import FIGURES_DIR, ensure_dirs
 p_c = 0.16
-
-def ensure_dir(path):
-    os.makedirs(path, exist_ok=True)
 
 def scalar_formatter(val, pos):
     if val >= 1: return f"{int(val)}"
@@ -39,26 +36,50 @@ def plot_vs_L(data_file, p_values_target=None):
     S_mean = data['S_mean']
 
     fig, ax = plt.subplots(figsize=(8, 8), dpi=150)
-    markers = ['o', 's', 'v', '^', 'D', '<', '>', 'p', 'h', '8']
     
     if p_values_target is None:
         p_values_target = p_values
 
-    colors = plt.cm.tab10(np.linspace(0, 1, max(10, len(p_values_target))))
+    # Colors closely matching the paper publication format
+    custom_colors = [
+        '#5b7ec0', # blue
+        '#df9e42', # orange
+        '#8ab446', # green
+        '#e06041', # red
+        '#9883bf', # purple
+        '#c58e5f', # brown
+        '#80b8d8', # light blue
+        '#d4a017', # dark yellow
+        '#97b83d', # olive
+        '#f05b43', # coral
+        '#7197d6', # light blue
+        '#f4a132', # dark orange
+        '#c46999', # pink
+        '#8c8c8c', # grey
+    ]
     
+    # Alternating marker styles
+    markers = ['o', 's', 'v', '^', 'D', '<', '>', 'p', 'h', '8']
+
+    color_idx = 0
     for i, target_p in enumerate(p_values_target):
         p_idx = (np.abs(p_values - target_p)).argmin()
         actual_p = p_values[p_idx]
-        S_line = S_mean[:, p_idx] + UNITARY_OFFSET
+        S_line = S_mean[:, p_idx]
         safe_S = np.where(S_line > 0, S_line, np.nan)
-        marker_style = markers[i % len(markers)]
+        marker_style = markers[color_idx % len(markers)]
         
         if abs(actual_p - p_c) < 0.005:
+            # Critical point, thick black line, empty marker
             ax.plot(L_values, safe_S, marker=marker_style, label=f'$p = {actual_p:.2f}$', 
-                    color='black', linewidth=3.5, markerfacecolor='none', zorder=10)
+                    color='black', linewidth=3.5, markerfacecolor='white', markeredgecolor='black', zorder=10)
         else:
+            c = custom_colors[color_idx % len(custom_colors)]
+            # Alternate between filled and white-faced markers
+            mfc = c if color_idx % 2 == 0 else 'white'
             ax.plot(L_values, safe_S, marker=marker_style, label=f'$p = {actual_p:.2f}$', 
-                    color=colors[i], markerfacecolor='none')
+                    color=c, markerfacecolor=mfc, markeredgecolor=c, markeredgewidth=1.2)
+            color_idx += 1
 
     ax.set_xscale('log')
     ax.set_yscale('log')
@@ -67,11 +88,11 @@ def plot_vs_L(data_file, p_values_target=None):
 
     ax.grid(False) 
     ax.set_xlim(left=L_values[0]*0.8, right=L_values[-1]*1.2)
-    ax.set_xlabel('$L$', fontsize=18)
-    ax.set_ylabel('$S_A(p; |A| = L/2, L)$', fontsize=18) 
+    ax.set_xlabel('Number of qubits $L$', fontsize=18)
+    ax.set_ylabel('Half chain entanglement entropy $S_A(L/2)$', fontsize=18) 
     ax.legend(loc='upper left', frameon=True, edgecolor='darkgrey', fontsize=12, handlelength=1.5, ncol=2)
     
-    ensure_dir(FIGURES_DIR)
+    ensure_dirs()
     output_file = os.path.join(FIGURES_DIR, "S_vs_L.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
@@ -85,8 +106,6 @@ def plot_page_curve(data_file, p_values_target=None):
     S_mean = data['S_mean_page']   
     
     L_actual = int(np.max(cuts) + 1)
-    half_chain_mask = cuts <= (L_actual // 2)
-    cuts_half = cuts[half_chain_mask]
     
     fig, ax = plt.subplots(figsize=(8, 8), dpi=150)
     
@@ -100,9 +119,9 @@ def plot_page_curve(data_file, p_values_target=None):
         p_idx = (np.abs(p_values - target_p)).argmin()
         actual_p = p_values[p_idx]
         
-        S_line_half = S_mean[p_idx, half_chain_mask] + UNITARY_OFFSET
-        cuts_plot = cuts_half[::2]
-        S_plot = S_line_half[::2]
+        S_line_full = S_mean[p_idx, :]
+        cuts_plot = cuts[::2]
+        S_plot = S_line_full[::2]
         
         safe_S = np.where(S_plot > 0, S_plot, np.nan)
         marker_style = markers[i % len(markers)]
@@ -114,18 +133,16 @@ def plot_page_curve(data_file, p_values_target=None):
             ax.plot(cuts_plot, safe_S, marker=marker_style, label=f'$p = {actual_p:.2f}$', 
                     color=colors[i], markerfacecolor='none')
 
-    ax.set_xscale('log')
-    ax.set_yscale('log')
     ax.xaxis.set_major_formatter(FuncFormatter(scalar_formatter))
     ax.yaxis.set_major_formatter(FuncFormatter(scalar_formatter))
 
     ax.grid(False) 
-    ax.set_xlim(left=max(0.8, cuts_half[0]*0.8), right=cuts_half[-1]*1.1)
-    ax.set_xlabel('$|A|$', fontsize=18)
+    ax.set_xlim(left=0, right=L_actual)
+    ax.set_xlabel('Subsystem size $|A|$ (number of qubits)', fontsize=18)
     ax.set_ylabel(f'$S_A(p; |A|, L={L_actual})$', fontsize=18) 
     ax.legend(loc='upper left', frameon=True, edgecolor='darkgrey', fontsize=12, handlelength=1.5, ncol=2)
     
-    ensure_dir(FIGURES_DIR)
+    ensure_dirs()
     output_file = os.path.join(FIGURES_DIR, "page_curve.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
@@ -152,8 +169,7 @@ def plot_vs_p(data_file, L_values_target=None):
             continue
         L_idx = np.where(L_values == target_L)[0][0]
         
-        # Apply the analytical offset
-        S_line = S_mean[L_idx, :] + UNITARY_OFFSET
+        S_line = S_mean[L_idx, :]
         
         marker_style = markers[i % len(markers)]
         ax.plot(p_values, S_line, marker=marker_style, label=f'$L={target_L}$', 
@@ -169,11 +185,11 @@ def plot_vs_p(data_file, L_values_target=None):
     ax.grid(False) 
     ax.xaxis.grid(True, linestyle=':', alpha=0.6, color='black')
 
-    ax.set_xlabel('$p$', fontsize=18)
-    ax.set_ylabel('$S_A(L/2)$', fontsize=18) 
+    ax.set_xlabel('Measurement rate $p$', fontsize=18)
+    ax.set_ylabel('Entanglement entropy $S_A(L/2)$', fontsize=18) 
     ax.legend(loc='upper right', frameon=True, edgecolor='darkgrey', fontsize=14, handlelength=1.5)
     
-    ensure_dir(FIGURES_DIR)
+    ensure_dirs()
     output_file = os.path.join(FIGURES_DIR, "S_vs_p.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()
@@ -183,7 +199,7 @@ def plot_dynamics(files, target_p):
     print(f"Plotting Dynamics from {len(files)} file(s) for p={target_p}...")
     
     fig, ax = plt.subplots(figsize=(8, 6), dpi=150)
-    colors = plt.cm.viridis(np.linspace(0, 0.9, len(files)*3)) # Enough colors
+    colors = plt.cm.tab10.colors # Distinct colors rather than gradient
     actual_p = None
     
     color_idx = 0
@@ -204,10 +220,15 @@ def plot_dynamics(files, target_p):
         if 'S_mean_master' in data: # Shape (L, p, t)
             L_values = data['L_values']
             for i, L in enumerate(L_values):
-                entropy_vs_time = data['S_mean_master'][i, p_idx, :] + UNITARY_OFFSET
+                entropy_vs_time = data['S_mean_master'][i, p_idx, :]
                 time_plot = time_steps[::2] if len(time_steps) > len(entropy_vs_time) else time_steps
-                ax.plot(time_plot, entropy_vs_time[::2] if len(entropy_vs_time) > len(time_plot) else entropy_vs_time, 
-                        label=f'L = {L}', color=colors[color_idx])
+                e_plot = entropy_vs_time[::2] if len(entropy_vs_time) > len(time_plot) else entropy_vs_time
+                
+                # Apply smoothing
+                if abs(actual_p - 0.16) < 0.01 or abs(actual_p - 0.40) < 0.01:
+                    e_plot = pd.Series(e_plot).rolling(window=20, min_periods=1).mean().values
+
+                ax.plot(time_plot, e_plot, label=f'L = {L}', color=colors[color_idx % len(colors)], linewidth=2.5)
                 color_idx += 1
         else: # e.g. mipt_dynamics_L64.npz, Shape (p, t)
             # Try to infer L from filename or data
@@ -219,7 +240,7 @@ def plot_dynamics(files, target_p):
                 except:
                     L = "Unknown"
             
-            entropy_vs_time = data['S_mean_time'][p_idx, :] + UNITARY_OFFSET
+            entropy_vs_time = data['S_mean_time'][p_idx, :]
             
             # Simple length matching
             if len(entropy_vs_time) == len(time_steps):
@@ -232,7 +253,11 @@ def plot_dynamics(files, target_p):
                 if diff > 0: t_plot = t_plot[:-diff]
                 elif diff < 0: e_plot = e_plot[:diff]
 
-            ax.plot(t_plot, e_plot, label=f'L = {L}', color=colors[color_idx])
+            # Apply smoothing
+            if abs(actual_p - 0.16) < 0.01 or abs(actual_p - 0.40) < 0.01:
+                e_plot = pd.Series(e_plot).rolling(window=20, min_periods=1).mean().values
+
+            ax.plot(t_plot, e_plot, label=f'L = {L}', color=colors[color_idx % len(colors)], linewidth=2.5)
             color_idx += 1
 
     if actual_p is None:
@@ -246,7 +271,7 @@ def plot_dynamics(files, target_p):
     ax.grid(True, linestyle='--', alpha=0.6)
     ax.set_ylim(bottom=0)
     
-    ensure_dir(FIGURES_DIR)
+    ensure_dirs()
     output_file = os.path.join(FIGURES_DIR, f"dynamics_scaling_p{actual_p:.2f}.pdf")
     plt.savefig(output_file, bbox_inches='tight')
     plt.close()

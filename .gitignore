@@ -3,7 +3,7 @@ data/*.npz
 
 # Ignore all generated plots
 figures/*.pdf
-
+paper_figures/
 # Ignore macOS hidden system files
 .DS_Store
 
