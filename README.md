@@ -88,6 +88,11 @@ This saves an aggregated `.npz` to the `data/scaling/` directory encapsulating t
 python src/execution/page_curve.py -L 64 -p 0.10 0.16 0.20 -N 500
 ```
 
+**Dynamics:** tracks entropy generation over circuit layers (time).
+```bash
+python src/execution/dynamics.py -L 32 64 -p 0.16 0.20 -N 500
+```
+
 ### 2. Data Processing
 For immense resolutions, simulations are often clustered. Rather than keeping them siloed, you can sew them laterally to consolidate the grids.
 ```bash
