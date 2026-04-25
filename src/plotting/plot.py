@@ -5,7 +5,7 @@ from matplotlib.ticker import FuncFormatter
 import os
 import argparse
 
-# PUBLICATION FORMATTING
+# FORMATTING
 plt.rcParams.update({
     'font.size': 16,
     'axes.linewidth': 1.2,
@@ -40,7 +40,7 @@ def plot_vs_L(data_file, p_values_target=None):
     if p_values_target is None:
         p_values_target = p_values
 
-    # Colors closely matching the paper publication format
+    # Colors
     custom_colors = [
         '#5b7ec0', # blue
         '#df9e42', # orange

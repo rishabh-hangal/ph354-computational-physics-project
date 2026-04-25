@@ -4,7 +4,7 @@ import os
 import os
 from src.config import FIGURES_DIR, SCALING_DATA_DIR, ensure_dirs
 
-# Publication formatting
+# Formatting
 plt.rcParams.update({
     'font.size': 16,
     'axes.linewidth': 1.2,
