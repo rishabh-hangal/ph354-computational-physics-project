@@ -16,9 +16,10 @@ paper_figures/
 *.npy
 *.csv
 
-# --- Jupyter Notebooks ---
+# --- Jupyter Notebooks & Local Scripts ---
 notebooks/playground.ipynb
 .ipynb_checkpoints/
+src/plotting/collapse.py
 
 # --- Python & Environments ---
 __pycache__/

@@ -48,7 +48,6 @@ ph354-computational-physics-project/
     │   └── merge_scaling_data.py# Concatenates finite-size parameter grid structures
     │
     └── plotting/            # Analysis and Publication Visualizations
-        ├── collapse.py          # Exponent data collapse using custom Nelder-Mead optimization
         └── plot.py              # CLI utility wrapper for various aesthetic plot formats
 ```
 
@@ -60,10 +59,7 @@ To exceed the 25-30 qubit bottleneck in classical density-matrix modeling, we re
 ### Extremely Fast GF(2) Rank Evaluation
 The core computational bottleneck of MIPT modeling is locating Entanglement Entropy (Von Neumann entropy), given as:
 $S_A = \text{Rank}(\text{proj}_A(\text{Stabilizer})) - |A|$
-In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). It subsequently performs a localized Gaussian Elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically. 
-
-### Critical Data Collapse
-`src/plotting/collapse.py` utilizes a custom built Nelder-Mead simplex optimizer to scale variables according to universal phase transition laws $(p-p_c)L^{1/\nu}$.
+In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). It subsequently performs a localized Gaussian Elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically.
 
 ## Installation & Requirements
 
@@ -115,12 +111,6 @@ python src/plotting/plot.py page --file data/page/master.npz
 # Extract Time scaling Dynamics over layers T
 python src/plotting/plot.py dynamics --files data/dynamics/dyn_L64.npz --target-p 0.16
 ```
-
-**Run Data Collapse Extractors:**
-```bash
-python src/plotting/collapse.py
-```
-This loads raw finite-size scaling grids and attempts to extract the critical crossover threshold $p_c$ and correlation length critical exponent $\nu$.
 
 ## References
 
