@@ -1,7 +1,7 @@
 # Measurement-Induced Phase Transitions (MIPT) in Random Clifford Circuits
 
 
-This repository contains code for the simulation of **Measurement-Induced Phase Transitions (MIPT)** in random Clifford circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties, and is designed to reproduce the key numerical results from Li, Chen, and Fisher's paper on the "Quantum Zeno effect and the many-body entanglement transition" (see [References](#references)).
+This repository contains code for the simulation of **Measurement-Induced Phase Transitions (MIPT)** in random Clifford circuits. This codebase simulates random circuits made up of 2-qubit Clifford gates and single-qubit Z-measurement operations to obtain entanglement entropy scaling properties, and is designed to reproduce the key numerical results from Li, Chen, and Fisher's paper on the "Quantum Zeno effect and the many-body entanglement transition" (see [References](#references)).
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -18,15 +18,13 @@ This repository contains code for the simulation of **Measurement-Induced Phase 
 ## Overview
 
 In dynamically evolving quantum systems, a phase transition occurs as the rate of local projective measurements $p$ increases. 
-- At low $p$ (Volume-law phase), the system generates widespread global entanglement.
-- At high $p$ (Area-law phase), measurements project the wave-function, localizing information.
+- At low $p$ (Volume-law phase), the system generates widespread global entanglement, and the entanglement entropy is proportional to system size.
+- At high $p$ (Area-law phase), measurements project the wave-function, localizing information, and the entanglement entropy is proportional to the boundary of the subsystem. In 1D, this means the entanglement entropy is a constant, irrespective of system size.
 - A critical point $p_c$ separates the two regimes.
 
-This simulation pipeline constructs random discrete Clifford circuits and measures the scaling evolution of Entanglement Entropy. Utilizing the [`Stim`](https://github.com/quantumlib/Stim) quantum emulator, it rapidly constructs layered 2-qubit tableau networks. Since the size of the Hilbert space scales exponentially $2^L$, evaluating entanglement entropy directly is notoriously difficult. Our engine bypasses this by translating tableaux into binary block matrices and extracting the GF(2) matrix rank using bit-parallelized `Numba` functions. 
+This simulation pipeline constructs random discrete Clifford circuits and measures the scaling evolution of entanglement entropy. Utilizing the [`Stim`](https://github.com/quantumlib/Stim) quantum emulator, it rapidly constructs layered 2-qubit tableau networks. For Clifford circuits, we can keep track of the state by keeping track of the generators of the stabilizer group. For an N-qubit state, we record these generators as rows of an $N \times 2N$ binary matrix. The entanglement entropy of a subsystem is calculated by extracting the GF(2) matrix rank of the submatrix corresponding to the subsystem using bit-parallelized `Numba` functions. 
 
 ## Architecture & Directory Structure
-
-
 
 ```text
 ph354-computational-physics-project/
@@ -35,31 +33,31 @@ ph354-computational-physics-project/
 └── src/                     
     ├── core/                # Lower-level physical formulations and algorithms
     │   ├── calculate_entropy.py # Numba-accelerated bit-packed GF(2) Rank Calculator
-    │   ├── circuits.py          # Random 2-qubit Clifford gates simulated via Stim
-    │   └── observables.py       # Macro-operations to retrieve circuit metrics
+    │   ├── circuits.py          # Builds random 2-qubit Clifford circuits using Stim
+    │   └── observables.py       # Extracts entanglement entropy as a function of different parameters
     │
     ├── execution/           # Orchestrated parallel executions for grid sweeps
     │   ├── dynamics.py          # Tracks entropy growth vs layers of circuit depth (time)
-    │   ├── entropy_scaling.py   # Parameter sweep to extract half-chain entropy vs L
-    │   └── page_curve.py        # Entropy scaling behavior measured at various sub-system 
+    │   ├── entropy_scaling.py   # Parameter sweep to extract half-chain entropy vs L, for different measurement rates
+    │   └── page_curve.py        # Entropy scaling behavior measured at various sub-system sizes, for different measurement rates
     │
     ├── data_processing/     # Map-reduce routines to concatenate batch jobs
     │   ├── merge_page.py        # Compiles parallel Page curve splits
-    │   └── merge_scaling_data.py# Concatenates finite-size parameter grid structures
+    │   └── merge_scaling_data.py# Concatenates simulation outputs for scaling data
     │
     └── plotting/            # Analysis and Publication Visualizations
-        └── plot.py              # CLI utility wrapper for various aesthetic plot formats
+        └── plot.py              # CLI utility wrapper for various plot formats
 ```
 
 ## Key Methodologies
 
 ### Stabilizer Simulation
-To exceed the 25-30 qubit bottleneck in classical density-matrix modeling, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to simulate circuits with thousands of qubits.
+To exceed the 25-30 qubit bottleneck in simulating quantum circuits by keeping track of the full density matrix, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to efficiently simulate circuits with up to 1024 qubits.
 
 ### Extremely Fast GF(2) Rank Evaluation
-The core computational bottleneck of MIPT modeling is locating Entanglement Entropy (Von Neumann entropy), given as:
-$S_A = \text{Rank}(\text{proj}_A(\text{Stabilizer})) - |A|$
-In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). It subsequently performs a localized Gaussian Elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically.
+One of the core computational bottlenecks of MIPT modeling is locating entanglement entropy (all Renyi entropies happen to be same for Clifford circuits!), given as:
+$$S_A = \text{Rank}(A) - |A|$$
+where $A$ is the GF(2) matrix of the stabilizer generators of the subsystem. In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). It subsequently performs a localized Gaussian elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically.
 
 ## Installation & Requirements
 
