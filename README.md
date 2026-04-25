@@ -22,7 +22,7 @@ In dynamically evolving quantum systems, a phase transition occurs as the rate o
 - At high $p$ (Area-law phase), measurements project the wave-function, localizing information, and the entanglement entropy is proportional to the boundary of the subsystem. In 1D, this means the entanglement entropy is a constant, irrespective of system size.
 - A critical point $p_c$ separates the two regimes.
 
-This simulation pipeline constructs random discrete Clifford circuits and measures the scaling evolution of entanglement entropy. Utilizing the [`Stim`](https://github.com/quantumlib/Stim) quantum emulator, it rapidly constructs layered 2-qubit tableau networks. For Clifford circuits, we can keep track of the state by keeping track of the generators of the stabilizer group. For an N-qubit state, we record these generators as rows of an $N \times 2N$ binary matrix. The entanglement entropy of a subsystem is calculated by extracting the GF(2) matrix rank of the submatrix corresponding to the subsystem using bit-parallelized `Numba` functions. 
+This simulation pipeline constructs random discrete Clifford circuits and measures the scaling evolution of entanglement entropy. Utilizing the [`Stim`](https://github.com/quantumlib/Stim) quantum emulator, it rapidly constructs layered 2-qubit tableau networks. For Clifford circuits, we can keep track of the state by keeping track of the generators of the stabilizer group. For an N-qubit state, we record these generators as rows of an $N \times 2N$ binary matrix. The entanglement entropy of a subsystem is calculated by extracting the GF(2) matrix rank of the submatrix corresponding to the subsystem using bit-parallelized `Numba` functions. Since we use random circuits, we must take an ensemble average over many (~500) independent realizations of the random circuit to obtain statistically meaningful results. 
 
 ## Architecture & Directory Structure
 
@@ -52,12 +52,13 @@ ph354-computational-physics-project/
 ## Key Methodologies
 
 ### Stabilizer Simulation
-To exceed the 25-30 qubit bottleneck in simulating quantum circuits by keeping track of the full density matrix, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to efficiently simulate circuits with up to 1024 qubits.
+To exceed the 25-30 qubit bottleneck in simulating quantum circuits by keeping track of the full density matrix, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to represent our state by a binary check matrix (tableau). Stim allows us to track the tableau as we apply gates and measurements. Since we deal with large system sizes, we build build only one layer of the circuit at a time, discarding the previous layer. We precompile all 11520 2-qubit Clifford gates before starting the simulations to enable efficient sampling of the random Clifford gates. 
 
-### Extremely Fast GF(2) Rank Evaluation
+
+### Fast Gaussian Elimination Over Binary Matrices
 One of the core computational bottlenecks of MIPT modeling is locating entanglement entropy (all Renyi entropies happen to be same for Clifford circuits!), given as:
 $$S_A = \text{Rank}(A) - |A|$$
-where $A$ is the GF(2) matrix of the stabilizer generators of the subsystem. In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). It subsequently performs a localized Gaussian elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically.
+where $A$ is the GF(2) matrix of the stabilizer generators of the subsystem. In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer matrices) into 64-bit integer vectors (`uint64`). To obtain the rank of submatrix A, it performs a localized Gaussian elimination algorithm, processing 64 operations concurrently per clock cycle via `Numba` compilation, accelerating typical evaluation workflows drastically.
 
 ## Installation & Requirements
 
