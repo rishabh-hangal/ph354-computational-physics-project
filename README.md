@@ -114,8 +114,8 @@ python src/plotting/plot.py dynamics --files data/dynamics/dynamics_L32-64_p0.16
 ## References
 
 - Yaodong Li, Xiao Chen, and Matthew P. A. Fisher. "Quantum Zeno effect and the many-body entanglement transition." *Phys. Rev. B* **98**, 205136 (2018). DOI: [https://doi.org/10.1103/PhysRevB.98.205136](https://doi.org/10.1103/PhysRevB.98.205136)
-- Craig Gidney. "Stim: a fast stabilizer circuit simulator."
-- Adam Nahum, Jonathan Ruhman, Sagar Vijay, and Jeongwan Haah. "Quantum Entanglement Growth under Random Unitary Dynamics." *Phys. Rev. X* **7**, 031016 (2017).
-- Brian Skinner, Jonathan Ruhman, and Adam Nahum. "Measurement-Induced Phase Transitions in the Dynamics of Entanglement." *Phys. Rev. X* **9**, 031009 (2019).
-- Yaodong Li, Xiao Chen, and Matthew P. A. Fisher. "Measurement-driven entanglement transition in hybrid quantum circuits." *Phys. Rev. B* **100**, 134306 (2019).
-- Brian Skinner. "Introduction to random unitary circuits and the measurement-induced entanglement phase transition." *Lecture Notes for the 2023 Condensed Matter Summer School*, arXiv:2307.02986 (2023).
+- Craig Gidney. "Stim: a fast stabilizer circuit simulator." *Quantum 5, 497 (2021).* DOI: [https://doi.org/10.22331/q-2021-07-06-497](https://doi.org/10.22331/q-2021-07-06-497)
+- Adam Nahum, Jonathan Ruhman, Sagar Vijay, and Jeongwan Haah. "Quantum Entanglement Growth under Random Unitary Dynamics." *Phys. Rev. X* **7**, 031016 (2017). DOI: [https://doi.org/10.1103/PhysRevX.7.031016](https://doi.org/10.1103/PhysRevX.7.031016)
+- Brian Skinner, Jonathan Ruhman, and Adam Nahum. "Measurement-Induced Phase Transitions in the Dynamics of Entanglement." *Phys. Rev. X* **9**, 031009 (2019). DOI: [https://doi.org/10.1103/PhysRevX.9.031009](https://doi.org/10.1103/PhysRevX.9.031009)
+- Yaodong Li, Xiao Chen, and Matthew P. A. Fisher. "Measurement-driven entanglement transition in hybrid quantum circuits." *Phys. Rev. B* **100**, 134306 (2019). DOI: [https://doi.org/10.1103/PhysRevB.100.134306](https://doi.org/10.1103/PhysRevB.100.134306)
+- Brian Skinner. "Introduction to random unitary circuits and the measurement-induced entanglement phase transition." arXiv:2307.02986 (2023). DOI: [https://doi.org/10.48550/arXiv.2307.02986](https://doi.org/10.48550/arXiv.2307.02986)
