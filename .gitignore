@@ -1,11 +1,42 @@
 # Ignore all simulation data
-data/*.npz
+data/
 
 # Ignore all generated plots
 figures/*.pdf
 paper_figures/
 # Ignore macOS hidden system files
 .DS_Store
+
+
+# --- Data and Output ---
+data/
+figures/
+paper_figures/
+*.npz
+*.npy
+*.csv
+
+# --- Jupyter Notebooks ---
+notebooks/playground.ipynb
+.ipynb_checkpoints/
+
+# --- Python & Environments ---
+__pycache__/
+*.pyc
+*.pyo
+venv/
+env/
+.venv/
+*.egg-info/
+build/
+dist/
+
+# --- IDEs & OS ---
+.DS_Store
+.vscode/
+.idea/
+
+
 
 # Ignore Python cache
 __pycache__/

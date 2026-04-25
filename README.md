@@ -1,6 +1,6 @@
 # Measurement-Induced Phase Transitions (MIPT) Simulation Pipeline
 
-This repository contains a code for simulation of **Measurement-Induced Phase Transitions (MIPT)** in random quantum circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties. 
+This repository contains a high-performance computational physics pipeline for simulating and analyzing **Measurement-Induced Phase Transitions (MIPT)** in random quantum circuits. Designed for scalability and publication-quality outputs, this codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties. 
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -46,7 +46,7 @@ ph354-computational-physics-project/
     │   ├── merge_page.py        # Compiles parallel Page curve splits
     │   └── merge_scaling_data.py# Concatenates finite-size parameter grid structures
     │
-    └── plotting/            # Analysis and Visualization
+    └── plotting/            # Analysis and Publication Visualizations
         ├── collapse.py          # Exponent data collapse using custom Nelder-Mead optimization
         └── plot.py              # CLI utility wrapper for various aesthetic plot formats
 ```
@@ -54,7 +54,7 @@ ph354-computational-physics-project/
 ## Key Methodologies
 
 ### Stabilizer Simulation
-To exceed the 25-30 qubit bottleneck in classical density-matrix modeling, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to simulate circuits up to 1000 qubits.
+To exceed the 25-30 qubit bottleneck in classical density-matrix modeling, we restrict the gate pool exclusively to the **Clifford Group**. Using `Stim`, this limits operations purely to stabilizer state rotations, allowing us to simulate circuits with thousands of qubits.
 
 ### Extremely Fast GF(2) Rank Evaluation
 The core computational bottleneck of MIPT modeling is locating Entanglement Entropy (Von Neumann entropy), given as:
@@ -68,6 +68,7 @@ In `src/core/calculate_entropy.py`, the system encodes boolean rows (stabilizer 
 
 1. Make sure Python 3.9+ is installed.  
 2. An active virtual environment (e.g. `stim_env`) is recommended.
+
 *(Note: Numba is highly necessary for caching and compiling the C-bound bitwise array structures.)*
 
 ## Usage
