@@ -1,7 +1,7 @@
 # Measurement-Induced Phase Transitions (MIPT) in Random Clifford Circuits
 
 
-This repository contains a code for simulation of **Measurement-Induced Phase Transitions (MIPT)** in random Clifford circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties. 
+This repository contains code for the simulation of **Measurement-Induced Phase Transitions (MIPT)** in random Clifford circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties, and is designed to reproduce the key numerical results from Li, Chen, and Fisher's paper on the "Quantum Zeno effect and the many-body entanglement transition" (see [References](#references)).
 
 ## Table of Contents
 1. [Overview](#overview)
@@ -116,3 +116,7 @@ python src/plotting/plot.py dynamics --files data/dynamics/dyn_L64.npz --target-
 python src/plotting/collapse.py
 ```
 This loads raw finite-size scaling grids and attempts to extract the critical crossover threshold $p_c$ and correlation length critical exponent $\nu$.
+
+## References
+
+- Yaodong Li, Xiao Chen, and Matthew P. A. Fisher. "Quantum Zeno effect and the many-body entanglement transition." *Phys. Rev. B* **98**, 205136 (2018). DOI: [https://doi.org/10.1103/PhysRevB.98.205136](https://doi.org/10.1103/PhysRevB.98.205136)
