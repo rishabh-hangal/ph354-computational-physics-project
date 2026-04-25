@@ -109,7 +109,7 @@ python src/plotting/plot.py vs-L --file data/scaling/master.npz --p-values 0.1 0
 python src/plotting/plot.py page --file data/page/master.npz 
 
 # Extract Time scaling Dynamics over layers T
-python src/plotting/plot.py dynamics --files data/dynamics/dyn_L64.npz --target-p 0.16
+python src/plotting/plot.py dynamics --files data/dynamics/dynamics_L32-64_p0.16-0.20_N500.npz --target-p 0.16
 ```
 
 ## References
