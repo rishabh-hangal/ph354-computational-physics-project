@@ -1,6 +1,6 @@
-# Measurement-Induced Phase Transitions (MIPT) Simulation Pipeline
+# Measurement-Induced Phase Transitions (MIPT) in Random Clifford Circuits
 
-This repository contains a code for simulation of **Measurement-Induced Phase Transitions (MIPT)** in random quantum circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties. 
+This repository contains a code for simulation of **Measurement-Induced Phase Transitions (MIPT)** in random Clifford circuits. This codebase simulates random two-qubit Clifford and measurement operations to trace entanglement entropy scaling properties. 
 
 ## Table of Contents
 1. [Overview](#overview)
